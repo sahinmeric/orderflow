@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { products } from "../services/mockData";
-
-export type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-};
+import { Product } from "../types/types";
 
 const useGetProducts = () => {
   const [data, setData] = useState<Product[]>([]);

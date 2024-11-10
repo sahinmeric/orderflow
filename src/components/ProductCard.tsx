@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Typography, Button, Stack } from "@mui/material";
-import { Product } from "../hooks/useGetProducts";
+import { Product } from "../types/types";
 
 type ProductCardProps = {
   product: Product;
