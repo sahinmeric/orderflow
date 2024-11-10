@@ -4,9 +4,10 @@ import { Order, OrderItem } from "../types/types";
 
 type OrderCardProps = {
   order: Order;
+  onEdit: (order: Order) => void;
 };
 
-const OrderCard = ({ order }: OrderCardProps) => {
+const OrderCard = ({ order, onEdit }: OrderCardProps) => {
   return (
     <Container
       maxWidth="md"
@@ -27,8 +28,8 @@ const OrderCard = ({ order }: OrderCardProps) => {
       </Typography>
       <Box>
         <Typography variant="subtitle1">Items:</Typography>
-        {order.items.map((item: OrderItem) => (
-          <Typography key={item.id} variant="body2">
+        {order.items.map((item: OrderItem, index) => (
+          <Typography key={index} variant="body2">
             - {item.name} (Quantity: {item.quantity}) - $
             {item.price * item.quantity}
           </Typography>
@@ -43,8 +44,10 @@ const OrderCard = ({ order }: OrderCardProps) => {
         justifyContent="flex-end"
         sx={{ marginTop: "16px" }}
       >
-        <Button variant="contained">Edit</Button>
-        <Button variant="outlined" color="error">
+        <Button variant="contained" onClick={() => onEdit(order)}>
+          Edit
+        </Button>
+        <Button variant="outlined" color="error" onClick={() => {}}>
           Delete
         </Button>
       </Stack>
