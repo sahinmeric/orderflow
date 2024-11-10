@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   Stack,
+  InputAdornment,
 } from "@mui/material";
 import { Product } from "../types/types";
 
@@ -47,6 +48,12 @@ const AddEditProductModal = ({
       [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
     });
   };
+
+  const isFormValid =
+    formData.name &&
+    formData.description &&
+    formData.price > 0 &&
+    formData.stock > 0;
 
   const handleSave = () => {
     onSave(formData);
@@ -94,6 +101,11 @@ const AddEditProductModal = ({
             value={formData.price}
             onChange={handleChange}
             fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
           />
           <TextField
             label="Stock"
@@ -107,7 +119,11 @@ const AddEditProductModal = ({
             <Button onClick={onClose} variant="outlined">
               Cancel
             </Button>
-            <Button onClick={handleSave} variant="contained">
+            <Button
+              onClick={handleSave}
+              variant="contained"
+              disabled={!isFormValid}
+            >
               {mode === "edit" ? "Update" : "Save"}
             </Button>
           </Stack>
