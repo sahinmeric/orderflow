@@ -3,6 +3,7 @@ import { Container, Button, Stack } from "@mui/material";
 import AddEditProductModal from "./AddEditProductModal";
 import ProductCard from "./ProductCard";
 import ConfirmationModal from "./ConfirmationModal";
+import SnackbarNotification from "./SnackbarNotification";
 import useGetProducts from "../hooks/useGetProducts";
 import { Product } from "../types/types";
 
@@ -13,6 +14,12 @@ const Products = () => {
   const [productList, setProductList] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "warning" | "info",
+  });
 
   useEffect(() => {
     setProductList(products);
@@ -25,6 +32,7 @@ const Products = () => {
     const productWithId: Product = { ...newProduct, id: uniqueId };
     setProductList([...productList, productWithId]);
     setOpenModal(false);
+    showSnackbar("Product added successfully!", "success");
   };
 
   const handleEditProduct = (updatedProduct: Product) => {
@@ -33,6 +41,7 @@ const Products = () => {
         prod.id === selectedProduct.id ? updatedProduct : prod
       );
       setProductList(updatedList);
+      showSnackbar("Product updated successfully!", "success");
     }
     setSelectedProduct(null);
     setOpenModal(false);
@@ -44,6 +53,7 @@ const Products = () => {
         (product) => product.id !== selectedProduct.id
       );
       setProductList(updatedList);
+      showSnackbar("Product deleted successfully!", "success");
     }
     setSelectedProduct(null);
     setOpenConfirmModal(false);
@@ -66,6 +76,17 @@ const Products = () => {
     setOpenConfirmModal(true);
   };
 
+  const showSnackbar = (
+    message: string,
+    severity: "success" | "error" | "warning" | "info"
+  ) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <Container maxWidth="md">
       <Stack direction="row" justifyContent="flex-start" mb={2}>
@@ -73,7 +94,14 @@ const Products = () => {
           Add Product
         </Button>
       </Stack>
-      {error && <p>{error}</p>}
+      {error && (
+        <SnackbarNotification
+          open={true}
+          onClose={handleCloseSnackbar}
+          message="Error loading products!"
+          severity="error"
+        />
+      )}
       {!loading &&
         productList.map((product) => (
           <ProductCard
@@ -100,6 +128,13 @@ const Products = () => {
         message={`Are you sure you want to delete ${selectedProduct?.name}?`}
         confirmLabel="Delete"
         cancelLabel="Cancel"
+      />
+
+      <SnackbarNotification
+        open={snackbar.open}
+        onClose={handleCloseSnackbar}
+        message={snackbar.message}
+        severity={snackbar.severity}
       />
     </Container>
   );
