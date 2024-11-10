@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Product } from "../types/types";
 
-type AddProductModalProps = {
+type AddEditProductModalProps = {
   open: boolean;
   onClose: () => void;
   onSave: (product: Product) => void;
@@ -17,13 +17,13 @@ type AddProductModalProps = {
   product?: Product;
 };
 
-const AddProductModal = ({
+const AddEditProductModal = ({
   open,
   onClose,
   onSave,
   mode,
   product,
-}: AddProductModalProps) => {
+}: AddEditProductModalProps) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -32,7 +32,6 @@ const AddProductModal = ({
     id: "",
   });
 
-  // Populate form data if editing an existing product
   useEffect(() => {
     if (mode === "edit" && product) {
       setFormData(product);
@@ -118,4 +117,4 @@ const AddProductModal = ({
   );
 };
 
-export default AddProductModal;
+export default AddEditProductModal;
