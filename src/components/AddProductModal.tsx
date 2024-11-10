@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -7,38 +7,52 @@ import {
   Button,
   Stack,
 } from "@mui/material";
+import { Product } from "../types/types";
 
 type AddProductModalProps = {
   open: boolean;
   onClose: () => void;
-  onSave: (product: {
-    name: string;
-    description: string;
-    price: number;
-    stock: number;
-  }) => void;
+  onSave: (product: Product) => void;
+  mode: "add" | "edit";
+  product?: Product;
 };
 
-const AddProductModal = ({ open, onClose, onSave }: AddProductModalProps) => {
-  const [product, setProduct] = React.useState({
+const AddProductModal = ({
+  open,
+  onClose,
+  onSave,
+  mode,
+  product,
+}: AddProductModalProps) => {
+  const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: 0,
     stock: 0,
+    id: "",
   });
+
+  // Populate form data if editing an existing product
+  useEffect(() => {
+    if (mode === "edit" && product) {
+      setFormData(product);
+    } else {
+      setFormData({ name: "", description: "", price: 0, stock: 0, id: "" });
+    }
+  }, [mode, product]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProduct({
-      ...product,
+    setFormData({
+      ...formData,
       [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
     });
   };
 
   const handleSave = () => {
-    onSave(product);
+    onSave(formData);
     onClose();
-    setProduct({ name: "", description: "", price: 0, stock: 0 });
+    setFormData({ name: "", description: "", price: 0, stock: 0, id: "" });
   };
 
   return (
@@ -57,20 +71,20 @@ const AddProductModal = ({ open, onClose, onSave }: AddProductModalProps) => {
         }}
       >
         <Typography variant="h6" mb={2}>
-          Add New Product
+          {mode === "edit" ? "Edit Product" : "Add New Product"}
         </Typography>
         <Stack spacing={2}>
           <TextField
             label="Name"
             name="name"
-            value={product.name}
+            value={formData.name}
             onChange={handleChange}
             fullWidth
           />
           <TextField
             label="Description"
             name="description"
-            value={product.description}
+            value={formData.description}
             onChange={handleChange}
             fullWidth
           />
@@ -78,7 +92,7 @@ const AddProductModal = ({ open, onClose, onSave }: AddProductModalProps) => {
             label="Price"
             name="price"
             type="number"
-            value={product.price}
+            value={formData.price}
             onChange={handleChange}
             fullWidth
           />
@@ -86,7 +100,7 @@ const AddProductModal = ({ open, onClose, onSave }: AddProductModalProps) => {
             label="Stock"
             name="stock"
             type="number"
-            value={product.stock}
+            value={formData.stock}
             onChange={handleChange}
             fullWidth
           />
@@ -95,7 +109,7 @@ const AddProductModal = ({ open, onClose, onSave }: AddProductModalProps) => {
               Cancel
             </Button>
             <Button onClick={handleSave} variant="contained">
-              Save
+              {mode === "edit" ? "Update" : "Save"}
             </Button>
           </Stack>
         </Stack>
