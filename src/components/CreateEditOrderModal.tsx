@@ -10,7 +10,9 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { OrderItem, Order } from "../types/types";
 import { products } from "../services/mockData";
 
@@ -47,11 +49,26 @@ const CreateEditOrderModal = ({
   const handleAddItem = () => {
     const product = products.find((p) => p.id === selectedProductId);
     if (product) {
-      const newItem: OrderItem = { ...product, quantity };
-      setSelectedItems([...selectedItems, newItem]);
+      const existingItemIndex = selectedItems.findIndex(
+        (item) => item.id === product.id
+      );
+
+      if (existingItemIndex !== -1) {
+        const updatedItems = [...selectedItems];
+        updatedItems[existingItemIndex].quantity += quantity;
+        setSelectedItems(updatedItems);
+      } else {
+        const newItem: OrderItem = { ...product, quantity };
+        setSelectedItems([...selectedItems, newItem]);
+      }
       setSelectedProductId("");
       setQuantity(1);
     }
+  };
+
+  const handleDeleteItem = (productId: string) => {
+    const updatedItems = selectedItems.filter((item) => item.id !== productId);
+    setSelectedItems(updatedItems);
   };
 
   const handleSave = () => {
@@ -127,11 +144,26 @@ const CreateEditOrderModal = ({
             Add Item
           </Button>
 
+          {/* Display the list of selected items */}
           <Box>
             {selectedItems.map((item, index) => (
-              <Typography key={index}>
-                {item.name} (x{item.quantity}) - ${item.price * item.quantity}
-              </Typography>
+              <Stack
+                key={index}
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ marginTop: 2 }}
+              >
+                <Typography>
+                  {item.name} (x{item.quantity}) - ${item.price * item.quantity}
+                </Typography>
+                <IconButton
+                  color="error"
+                  onClick={() => handleDeleteItem(item.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
             ))}
           </Box>
 
