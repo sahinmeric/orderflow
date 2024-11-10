@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Tabs, Tab, Box } from "@mui/material";
 import Products from "../components/Products";
+import Orders from "../components/Orders";
 
 const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -17,7 +18,7 @@ const Dashboard = () => {
         <Tab label="Orders" />
       </Tabs>
       {selectedTab === 0 && <Products />}
-      {selectedTab === 1 && <Box p={3}>Manage Orders Here</Box>}
+      {selectedTab === 1 && <Orders />}
     </Box>
   );
 };
