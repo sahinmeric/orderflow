@@ -1,13 +1,13 @@
-import React from "react";
 import { Container, Typography, Button, Stack } from "@mui/material";
 import { Product } from "../types/types";
 
 type ProductCardProps = {
   product: Product;
   onEdit: (product: Product) => void;
+  onDelete: (product: Product) => void;
 };
 
-const ProductCard = ({ product, onEdit }: ProductCardProps) => {
+const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
   return (
     <Container
       maxWidth="md"
@@ -21,7 +21,11 @@ const ProductCard = ({ product, onEdit }: ProductCardProps) => {
         <Button variant="contained" onClick={() => onEdit(product)}>
           Edit
         </Button>
-        <Button variant="outlined" color="error">
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={() => onDelete(product)}
+        >
           Delete
         </Button>
       </Stack>

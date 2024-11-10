@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Container, Button, Stack } from "@mui/material";
 import AddEditProductModal from "./AddEditProductModal";
 import ProductCard from "./ProductCard";
+import ConfirmationModal from "./ConfirmationModal";
 import useGetProducts from "../hooks/useGetProducts";
 import { Product } from "../types/types";
 
 const Products = () => {
   const { data: products, loading, error } = useGetProducts();
   const [openModal, setOpenModal] = useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [productList, setProductList] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
@@ -36,6 +38,17 @@ const Products = () => {
     setOpenModal(false);
   };
 
+  const handleDeleteProduct = () => {
+    if (selectedProduct) {
+      const updatedList = productList.filter(
+        (product) => product.id !== selectedProduct.id
+      );
+      setProductList(updatedList);
+    }
+    setSelectedProduct(null);
+    setOpenConfirmModal(false);
+  };
+
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
     setModalMode("edit");
@@ -48,6 +61,11 @@ const Products = () => {
     setOpenModal(true);
   };
 
+  const handleDelete = (product: Product) => {
+    setSelectedProduct(product);
+    setOpenConfirmModal(true);
+  };
+
   return (
     <Container maxWidth="md">
       <Stack direction="row" justifyContent="flex-start" mb={2}>
@@ -58,7 +76,12 @@ const Products = () => {
       {error && <p>{error}</p>}
       {!loading &&
         productList.map((product) => (
-          <ProductCard key={product.id} product={product} onEdit={handleEdit} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         ))}
 
       <AddEditProductModal
@@ -67,6 +90,16 @@ const Products = () => {
         onSave={modalMode === "add" ? handleAddProduct : handleEditProduct}
         mode={modalMode}
         product={selectedProduct || undefined}
+      />
+
+      <ConfirmationModal
+        open={openConfirmModal}
+        onClose={() => setOpenConfirmModal(false)}
+        onConfirm={handleDeleteProduct}
+        title="Delete Product"
+        message={`Are you sure you want to delete ${selectedProduct?.name}?`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
       />
     </Container>
   );
